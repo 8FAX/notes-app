@@ -17,7 +17,7 @@ class LoginPage(QWidget):
 
         # Creating a QLabel to display the logo
         logo_label = QLabel()
-        logo_label.setPixmap(logo_image.scaledToWidth(200))  # Adjust the width as desired
+        logo_label.setPixmap(logo_image.scaledToWidth(600))  # Adjust the width as desired
         logo_label.setAlignment(Qt.AlignCenter)
 
         # Scaling the logo based on window size
@@ -26,7 +26,9 @@ class LoginPage(QWidget):
         self.username_input = QLineEdit()
         self.password_input = QLineEdit()
         self.login_button = QPushButton("Log In")
+        self.login_button.setMaximumWidth(200)
         self.signup_button = QPushButton("Sign Up")
+        self.signup_button.setMaximumWidth(5000)
 
         # Setting placeholder text for input boxes
         self.username_input.setPlaceholderText("Username")
@@ -36,8 +38,8 @@ class LoginPage(QWidget):
         layout.addWidget(logo_label)
         layout.addWidget(self.username_input)
         layout.addWidget(self.password_input)
-        layout.addWidget(self.login_button)
-        layout.addWidget(self.signup_button)
+        layout.addWidget(self.login_button, alignment=Qt.AlignCenter)
+        layout.addWidget(self.signup_button, alignment=Qt.AlignCenter)
 
         self.setLayout(layout)
 
