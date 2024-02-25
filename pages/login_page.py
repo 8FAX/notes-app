@@ -1,10 +1,9 @@
-# login_page.py
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
-from assets.styles import input_style, button_style
+from assets.styles import button_style, login_button_style, login_input_style
+from events.buttons.login_button_events import on_login_button_clicked
 import json
-
 
 class LoginPage(QWidget):
     def __init__(self, stacked_widget):
@@ -25,7 +24,8 @@ class LoginPage(QWidget):
 
         self.username_input = QLineEdit()
         self.password_input = QLineEdit()
-        self.login_button = QPushButton("Log In")
+        self.login_button = QPushButton('Login', self)
+        self.login_button.clicked.connect(lambda: on_login_button_clicked(self))
         self.login_button.setMaximumWidth(200)
         self.signup_button = QPushButton("Sign Up")
         self.signup_button.setMaximumWidth(5000)
@@ -44,22 +44,8 @@ class LoginPage(QWidget):
         self.setLayout(layout)
 
         # Applying the styles
-        self.username_input.setStyleSheet(input_style)
-        self.password_input.setStyleSheet(input_style)
-        self.login_button.setStyleSheet(button_style)
+        self.username_input.setStyleSheet(login_input_style)
+        self.password_input.setStyleSheet(login_input_style)
+        self.login_button.setStyleSheet(login_button_style)
         self.signup_button.setStyleSheet(button_style)
-
-        self.login_button.clicked.connect(self.login)
-    
-    def login(self):
-        username_or_email = self.username_input.text().upper()
-        password = self.password_input.text()
-
-        with open('data/users.json', 'r') as f:
-            users = json.load(f)
-
-        for user in users:
-            if (user['username'].upper() == username_or_email or user['email'].upper() == username_or_email) and user['password'] == password:
-                self.stacked_widget.setCurrentIndex(1)  # assuming the notes page is at index 1
-                break
-
+        
