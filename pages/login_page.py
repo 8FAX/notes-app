@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QAction
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt
+
 from assets.styles import button_style, login_button_style, login_input_style
 from events.buttons.login_button_events import on_login_button_clicked
 import json
@@ -28,11 +29,20 @@ class LoginPage(QWidget):
         self.login_button.clicked.connect(lambda: on_login_button_clicked(self))
         self.login_button.setMaximumWidth(200)
         self.signup_button = QPushButton("Sign Up")
-        self.signup_button.setMaximumWidth(5000)
+        self.signup_button.setMaximumWidth(200)
 
         # Setting placeholder text for input boxes
         self.username_input.setPlaceholderText("Username")
         self.password_input.setPlaceholderText("Password")
+        self.password_input.setEchoMode(QLineEdit.Password)
+
+        # Adding toggle action to password input field
+        self.toggle_password_visibility_action = QAction(self)
+        self.toggle_password_visibility_action.triggered.connect(self.toggle_password_visibility)
+        self.password_input.addAction(self.toggle_password_visibility_action, QLineEdit.TrailingPosition)
+        
+        # Set icon for the visibility toggle action
+        self.toggle_password_visibility_action.setIcon(QIcon('assets/eye_icon_3989747'))  
 
         layout = QVBoxLayout()
         layout.addWidget(logo_label)
@@ -48,4 +58,11 @@ class LoginPage(QWidget):
         self.password_input.setStyleSheet(login_input_style)
         self.login_button.setStyleSheet(login_button_style)
         self.signup_button.setStyleSheet(button_style)
-        
+
+    def toggle_password_visibility(self):
+        if self.password_input.echoMode() == QLineEdit.Password:
+            self.password_input.setEchoMode(QLineEdit.Normal)
+            self.toggle_password_visibility_action.setIcon(QIcon('assets/toggle_password_visibility_ON'))  # Change icon
+        else:
+            self.password_input.setEchoMode(QLineEdit.Password)
+            self.toggle_password_visibility_action.setIcon(QIcon('assets/eye_icon_3989747'))  # Change icon
