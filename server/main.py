@@ -18,9 +18,9 @@ class PasswordServer(socketserver.BaseRequestHandler):
         self.create_table()
         client_ip = self.client_address[0]
         connection_start_time = datetime.datetime.now()
-        logging.info(f"New connection from {client_ip} at {connection_start_time}")
+        logging.info(f"{connection_start_time} - New connection from {client_ip}")
 
-        self.request.settimeout(20) # Set a timeout of 20 seconds
+        self.request.settimeout(20)  # Set a timeout of 20 seconds
 
         while True:
             try:
@@ -35,24 +35,24 @@ class PasswordServer(socketserver.BaseRequestHandler):
                     response = str(self.register_user(identifier, email, password))
                     connection_end_time = datetime.datetime.now()
                     connection_duration = connection_end_time - connection_start_time
-                    logging.info(f"{curent_time} - Connection from {client_ip} closed. Duration: {connection_duration}, Response:  {response} Type: register")
+                    logging.info(f"INFO - {curent_time} - Connection from {client_ip} closed. Duration: {connection_duration}, Response:  {response} Type: register")
                 elif data.startswith("authenticate"):
                     _, identifier, password = data.split("=")
                     response = str(self.authenticate_user(identifier, password))
                     connection_end_time = datetime.datetime.now()
                     connection_duration = connection_end_time - connection_start_time
-                    logging.info(f"{curent_time} - Connection from {client_ip} closed. Duration: {connection_duration}, Response:  {response} Type: authenticate")
+                    logging.info(f"INFO - {curent_time} - Connection from {client_ip} closed. Duration: {connection_duration}, Response:  {response} Type: authenticate")
                 else:
                     response = "error: invalid command"
                     connection_end_time = datetime.datetime.now()
                     connection_duration = connection_end_time - connection_start_time
-                    logging.info(f"{curent_time} - Connection from {client_ip} closed. Duration: {connection_duration}, Response:  {response} Type: UNknown")
+                    logging.info(f"INFO -  {curent_time} - Connection from {client_ip} closed. Duration: {connection_duration}, Response:  {response} Type: UNknown")
             
                 self.request.sendall(response.encode("utf-8"))
             except socket.timeout:
                 break
             except Exception as e:
-                logging.error(f"{curent_time} - Exception:", e)
+                logging.info(f"ERROR - {curent_time} - Exception:", e)
                 break
 
             self.conn.close()
@@ -125,6 +125,7 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
 
 if __name__ == "__main__":
+    logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(message)s', level=logging.INFO)
     parser = argparse.ArgumentParser(description="Password server")
     parser.add_argument("--dev", action="store_true", help="Run server on local IP")
     args = parser.parse_args()
@@ -138,10 +139,8 @@ if __name__ == "__main__":
     server_thread.start()
 
     print("Server loop running in thread:", server_thread.name)
-    logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
     logging.info(f"{curent_time} - RESTARTED SERVER -- RESTARTED SERVER -- RESTARTED SERVER -- RESTARTED SERVER -- RESTARTED SERVER -- RESTARTED SERVER - {curent_time}")
     logging.info(f"{curent_time} - Server loop running in thread: {server_thread.name}")
     logging.info(f"{curent_time} - Server started on {HOST}:{PORT}")  
 
-    # logging looks to be broken will fix later <3
     server_thread.join()  
